@@ -45,12 +45,19 @@ class AppServerSvc(win32serviceutil.ServiceFramework):
                     pass
             else:
                 self.start_process()
-            time.sleep(5)
+            self.time_sleep(5)
 
     @staticmethod
     def start_process():
         command = 'start xxx.exe'
         subprocess.Popen(command, shell=True)
+
+    def time_sleep(self, n):
+        for _ in range(n * 10):
+            if win32event.WaitForSingleObject(self.hWaitStop, 50) == win32event.WAIT_OBJECT_0:
+                # Stop signal received, exit the loop
+                return
+            time.sleep(0.1)
 
 
 if __name__ == '__main__':
